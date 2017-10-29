@@ -1,0 +1,25 @@
+{
+  "name": "Mosinve/CatalogAPI",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "author's name",
+      "email": "email@example.com"
+    }
+  ],
+  "autoload":{
+    "psr-4":
+      {
+        "CatalogAPI\\" : "classes/"
+      },
+    "files": ["config.php"]
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^6.4"
+  },
+  "require": {
+    "guzzlehttp/psr7": "1.4.2",
+    "phpunit/dbunit": "3.0.1"
+  }
+}
