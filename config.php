@@ -9,11 +9,11 @@
     return [
         'database' => [
             'driver'   => 'mysql',
-            'host'     => '192.168.99.10',
+            'host'     => '192.168.239.128',
             'port'     => '3306',
-            'database' => 'test',
-            'user'     => 'root',
-            'password' => ''
+            'database' => 'catalog',
+            'user'     => 'cih',
+            'password' => 'cih'
         ],
         'router' => [
             'basepath' => 'http://127.0.0.1:8000/api/v1/product/'
