@@ -27,7 +27,6 @@
 
         public function run()
         {
-            // echo 1;
             $response = $this->api->handleRequest(Request::fromGlobals());
             $this->renderResponse($response);
         }
@@ -35,20 +34,20 @@
         private function renderResponse(ResponseInterface $response): void
         {
 
-            if ( ! headers_sent()) {
-                header(sprintf(
-                    'HTTP/%s %s %s',
-                    $response->getProtocolVersion(),
-                    $response->getStatusCode(),
-                    $response->getReasonPhrase()
-                ));
-
-                foreach ($response->getHeaders() as $name => $values) {
-                    foreach ($values as $value) {
-                        header(sprintf('%s: %s', $name, $value), false);
-                    }
-                }
-            }
+            // if ( ! headers_sent()) {
+            //     header(sprintf(
+            //         'HTTP/%s %s %s',
+            //         $response->getProtocolVersion(),
+            //         $response->getStatusCode(),
+            //         $response->getReasonPhrase()
+            //     ));
+            //
+            //     foreach ($response->getHeaders() as $name => $values) {
+            //         foreach ($values as $value) {
+            //             header(sprintf('%s: %s', $name, $value), false);
+            //         }
+            //     }
+            // }
 
             $body          = $response->getBody();
             $contentLength = $response->getHeaderLine('Content-Length');

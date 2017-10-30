@@ -11,11 +11,11 @@
             'driver'   => 'mysql',
             'host'     => '192.168.99.10',
             'port'     => '3306',
-            'database' => 'test',
+            'database' => 'catalog',
             'user'     => 'root',
-            'password' => ''
+            'password' => 'root'
         ],
         'router' => [
-            'basepath' => 'http://127.0.0.1:8000/api/v1/product/'
+            'basepath' => 'http://192.168.99.10/api/v1/product'
         ]
     ];

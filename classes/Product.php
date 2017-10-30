@@ -26,7 +26,7 @@
             $this->weight = $data['weight'];
             $this->size = $data['size'];
             $this->price = $data['price'];
-            $this->typeid = $data['typeid'];
+            $this->type = $data['type'];
             if (isset($data['id'])){
                 $this->id = $data['id'];
             }

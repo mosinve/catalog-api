@@ -20,15 +20,15 @@
 
         public function testIndex()
         {
-            $ch = curl_init('http://127.0.0.1:8000/api/v1/product');
+            $ch = curl_init('http://192.168.99.10/api/v1/product');
             $data = ['name'   => 'Картон G',
-                'typeid' => 1,
+                'type' => 1,
                 'size'   => 20,
                 'weight' => 40,
                 'price'  => 200];
             $data_string = json_encode($data);
 
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_HTTPHEADER, array(

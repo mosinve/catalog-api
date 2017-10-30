@@ -105,46 +105,8 @@
          */
         public function handleRequest(ServerRequestInterface $request)
         {
-            return $this->process($this->getMatchedRoute($request));
-        }
-
-        /**
-         * @param ServerRequestInterface $request
-         *
-         * @return ServerRequestInterface
-         */
-        private function getMatchedRoute(ServerRequestInterface $request): ServerRequestInterface
-        {
-            $methodRoutes = $this->routes[$request->getMethod()];
-            foreach ($methodRoutes as $route) {
-                if (preg_match('/' . $route . '/',
-                    UriResolver::relativize(uri_for($this->basePath), $request->getUri()), $matches)) {
-                    array_shift($matches);
-                    $request = $request->withAttribute('callback', $route->getCallback());
-                    if ($route->hasParams()) {
-                        $params  = array_combine(array_values($route->getParams()), $matches);
-                        $request = $request->withAttribute('params', $params);
-                    }
-                    break;
-                }
-            }
-
-            return $request;
-        }
-
-        /**
-         * @param $request ServerRequestInterface
-         *
-         * @return mixed
-         */
-        private function process(ServerRequestInterface $request): ResponseInterface
-        {
-            $callback = $request->getAttribute('callback');
             try {
-                /**
-                 * @var ResponseInterface $response
-                 */
-                $response = $callback($request);
+            return $this->process($this->getMatchedRoute($request));
             } catch (\Exception $e) {
                 $code   = $e->getCode();
                 $result = $e->getMessage();
@@ -163,6 +125,45 @@
 
                 return $errMsg;
             }
+        }
+
+        /**
+         * @param ServerRequestInterface $request
+         *
+         * @return ServerRequestInterface
+         */
+        private function getMatchedRoute(ServerRequestInterface $request): ServerRequestInterface
+        {
+            $methodRoutes = $this->routes[$request->getMethod()];
+            foreach ($methodRoutes as $route) {
+                if (preg_match('/' . preg_quote($this->basePath,'/').$route . '/',
+                    UriResolver::resolve(uri_for($this->basePath), $request->getUri()), $matches)) {
+                    array_shift($matches);
+                    $request = $request->withAttribute('callback', $route->getCallback());
+                    if ($route->hasParams()) {
+                        $params  = array_combine(array_values($route->getParams()), $matches);
+                        $request = $request->withAttribute('params', $params);
+                    }
+                    return $request;
+                }
+            }
+            throw new NotFoundException('Nothing found');
+        }
+
+        /**
+         * @param $request ServerRequestInterface
+         *
+         * @return mixed
+         */
+        private function process(ServerRequestInterface $request): ResponseInterface
+        {
+            $callback = $request->getAttribute('callback');
+
+                /**
+                 * @var ResponseInterface $response
+                 */
+                $response = $callback($request);
+
 
             return $response;
         }
