@@ -10,6 +10,7 @@ namespace CatalogAPI;
 
 use function Http\Response\send;
 use Psr\Http\Message\ResponseInterface;
+use Relay\RelayBuilder;
 
 class App
 {

@@ -6,7 +6,7 @@
      * Time: 20:36
      */
 
-    require __DIR__ . '../bootstrap.php';
+    require __DIR__ . '/../bootstrap.php';
 
     use CatalogAPI\App;
 use CatalogAPI\CorsMiddleware;

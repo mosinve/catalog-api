@@ -14,7 +14,7 @@ class JSONResponse extends \GuzzleHttp\Psr7\Response
     {
         $jsonHeaders = [
             'Content-Type'                => 'application/json',
-            'Access-Control-Allow-Origin' => '*',
+            // 'Access-Control-Allow-Origin' => '*',
         ];
         parent::__construct($status, array_merge($headers, $jsonHeaders), $body, $version, $reason);
     }
