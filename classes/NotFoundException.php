@@ -9,7 +9,14 @@
     namespace CatalogAPI;
 
 
+    /**
+     * Class NotFoundException
+     * @package CatalogAPI
+     */
     class NotFoundException extends \Exception
     {
+        /**
+         * @var string
+         */
         protected $code = '404';
     }

@@ -9,8 +9,15 @@
     namespace CatalogAPI;
 
 
+    /**
+     * Class Route
+     * @package CatalogAPI
+     */
     class Route
     {
+        /**
+         * @var
+         */
         private $callback;
 
 
@@ -19,13 +26,22 @@
          */
         private $uriPattern;
 
+        /**
+         * @var
+         */
         private $params;
 
         private const PARAMS_REGEX = '/\\\?:\s*([\w-]*)\s*/';
 
+        /**
+         * Route constructor.
+         *
+         * @param $callback
+         * @param string $uriPattern
+         */
         public function __construct($callback, string $uriPattern)
         {
-            $this->callback = $callback;
+            $this->callback   = $callback;
             $this->uriPattern = $uriPattern;
             $this->fetchParams($this->uriPattern);
         }
@@ -79,23 +95,29 @@
         }
 
         /**
-         * @param mixed $params
+         * @param $uri
          */
         public function fetchParams($uri)
         {
             preg_match_all(static::PARAMS_REGEX, $uri, $matches, PREG_SET_ORDER);
-            foreach ($matches as [$placeholder, $param]){
+            foreach ($matches as [$placeholder, $param]) {
                 $this->params[$placeholder] = $param;
             }
         }
 
+        /**
+         * @return string
+         */
         public function __toString()
         {
-            return (string) preg_replace(self::PARAMS_REGEX, '(.*)', preg_quote($this->uriPattern, '/'));
+            return (string)preg_replace(self::PARAMS_REGEX, '(.*)', preg_quote($this->uriPattern, '/'));
         }
 
-        public function hasParams():bool
+        /**
+         * @return bool
+         */
+        public function hasParams(): bool
         {
-            return !!$this->params;
+            return ! ! $this->params;
         }
     }

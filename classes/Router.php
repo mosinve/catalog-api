@@ -106,7 +106,7 @@
         public function handleRequest(ServerRequestInterface $request)
         {
             try {
-            return $this->process($this->getMatchedRoute($request));
+                return $this->process($this->getMatchedRoute($request));
             } catch (\Exception $e) {
                 $code   = $e->getCode();
                 $result = $e->getMessage();
@@ -116,8 +116,8 @@
                 $error = [
                     'errors' => [
                         'status' => $code,
-                        'title' => $errMsg->getReasonPhrase(),
-                        'detail' =>$result
+                        'title'  => $errMsg->getReasonPhrase(),
+                        'detail' => $result
                     ]
                 ];
 
@@ -127,16 +127,18 @@
             }
         }
 
+
         /**
          * @param ServerRequestInterface $request
          *
          * @return ServerRequestInterface
+         * @throws NotFoundException
          */
         private function getMatchedRoute(ServerRequestInterface $request): ServerRequestInterface
         {
             $methodRoutes = $this->routes[$request->getMethod()];
             foreach ($methodRoutes as $route) {
-                if (preg_match('/' . preg_quote($this->basePath,'/').$route . '/',
+                if (preg_match('/' . preg_quote($this->basePath, '/') . $route . '/',
                     UriResolver::resolve(uri_for($this->basePath), $request->getUri()), $matches)) {
                     array_shift($matches);
                     $request = $request->withAttribute('callback', $route->getCallback());
@@ -144,6 +146,7 @@
                         $params  = array_combine(array_values($route->getParams()), $matches);
                         $request = $request->withAttribute('params', $params);
                     }
+
                     return $request;
                 }
             }
@@ -159,12 +162,9 @@
         {
             $callback = $request->getAttribute('callback');
 
-                /**
-                 * @var ResponseInterface $response
-                 */
-                $response = $callback($request);
-
-
-            return $response;
+            /**
+             * @var ResponseInterface $response
+             */
+            return $callback($request);
         }
     }

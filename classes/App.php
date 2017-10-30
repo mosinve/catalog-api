@@ -10,13 +10,34 @@
 
     use Psr\Http\Message\ResponseInterface;
 
+    /**
+     * Class App
+     * @package CatalogAPI
+     */
     class App
     {
+        /**
+         * @var DB
+         */
         public $db;
+        /**
+         * @var Router
+         */
         public $api;
+        /**
+         * @var Catalog
+         */
         public $catalog;
+        /**
+         * @var Controller
+         */
         public $controller;
 
+        /**
+         * App constructor.
+         *
+         * @param $config
+         */
         public function __construct($config)
         {
             $this->db         = new DB($config['database']);
@@ -25,40 +46,40 @@
             $this->controller = new Controller($this->catalog);
         }
 
-        public function run()
+        /**
+         *
+         */
+        public function run(): void
         {
             $response = $this->api->handleRequest(Request::fromGlobals());
             $this->renderResponse($response);
         }
 
+        /**
+         * @param ResponseInterface $response
+         */
         private function renderResponse(ResponseInterface $response): void
         {
 
-            // if ( ! headers_sent()) {
-            //     header(sprintf(
-            //         'HTTP/%s %s %s',
-            //         $response->getProtocolVersion(),
-            //         $response->getStatusCode(),
-            //         $response->getReasonPhrase()
-            //     ));
-            //
-            //     foreach ($response->getHeaders() as $name => $values) {
-            //         foreach ($values as $value) {
-            //             header(sprintf('%s: %s', $name, $value), false);
-            //         }
-            //     }
-            // }
-
-            $body          = $response->getBody();
-            $contentLength = $response->getHeaderLine('Content-Length');
-            if ( ! $contentLength) {
-                $contentLength = $body->getSize();
+            if ( ! headers_sent()) {
+                header(sprintf(
+                    'HTTP/%s %s %s',
+                    $response->getProtocolVersion(),
+                    $response->getStatusCode(),
+                    $response->getReasonPhrase()
+                ), true, $response->getStatusCode());
+                foreach ($response->getHeaders() as $name => $values) {
+                    foreach ($values as $value) {
+                        header(sprintf('%s: %s', $name, $value), false);
+                    }
+                }
             }
-
-
-
-            if ($contentLength) {
-                print $body;
+            $stream = $response->getBody();
+            if ($stream->isSeekable()) {
+                $stream->rewind();
+            }
+            while ( ! $stream->eof()) {
+                echo $stream->read(1024 * 8);
             }
 
         }

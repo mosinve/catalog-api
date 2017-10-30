@@ -9,6 +9,10 @@
     namespace CatalogAPI;
 
 
+    /**
+     * Class ErrorResponse
+     * @package CatalogAPI
+     */
     class ErrorResponse extends JSONResponse
     {
 

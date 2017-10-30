@@ -37,6 +37,7 @@
         public function getProduct(ServerRequestInterface $request)
         {
             $result = $this->catalog->getProduct($request->get('id'));
+
             return new JSONResponse(200, [], json_encode($result));
         }
 
@@ -83,9 +84,10 @@
         public function deleteProduct(ServerRequestInterface $request)
         {
             $prod = $this->catalog->getProduct($request->get('id'));
-            if ($prod){
+            if ($prod) {
                 $this->catalog->deleteProduct($request->get('id'));
             }
+
             return new JSONResponse();
         }
     }

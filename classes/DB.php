@@ -10,6 +10,10 @@
 
     use PDO, PDOException;
 
+    /**
+     * Class DB
+     * @package CatalogAPI
+     */
     class DB
     {
 
@@ -17,10 +21,25 @@
          * @var \PDO
          */
         private $connection;
+        /**
+         * @var array
+         */
         private $fields = ['*'];
+        /**
+         * @var
+         */
         private $table;
+        /**
+         * @var array
+         */
         private $wheres = [];
+        /**
+         * @var
+         */
         private $query;
+        /**
+         * @var
+         */
         private $cmd;
 
         const SELECT_CMD = 'SELECT';
@@ -28,6 +47,11 @@
         const UPDATE_CMD = 'UPDATE';
         const DELETE_CMD = 'DELETE';
 
+        /**
+         * DB constructor.
+         *
+         * @param $config
+         */
         public function __construct($config)
         {
 
@@ -41,6 +65,11 @@
 
         }
 
+        /**
+         * @param $table
+         *
+         * @return $this
+         */
         public function table($table)
         {
             $this->table = $table;
@@ -48,6 +77,11 @@
             return $this;
         }
 
+        /**
+         * @param array ...$fields
+         *
+         * @return $this
+         */
         public function fields(...$fields)
         {
             $this->fields = $fields;
@@ -55,6 +89,14 @@
             return $this;
         }
 
+        /**
+         * @param $field
+         * @param null $value
+         * @param string $operator
+         * @param string $boolean
+         *
+         * @return DB
+         */
         public function where($field, $value = null, $operator = '=', $boolean = 'AND'): self
         {
             if (is_array($field)) {
@@ -71,6 +113,13 @@
             return $this;
         }
 
+        /**
+         * @param $field
+         * @param null $value
+         * @param string $operator
+         *
+         * @return DB
+         */
         public function orWhere($field, $value = null, $operator = '='): self
         {
             $this->where($field, $value, $operator, 'OR');
@@ -78,6 +127,11 @@
             return $this;
         }
 
+        /**
+         * @param array $wheres
+         *
+         * @return string
+         */
         public function buildWhere(array $wheres): string
         {
             $txtWhere   = [];
@@ -130,17 +184,26 @@
             return false;
         }
 
+        /**
+         * @return array|bool|int|string
+         */
         public function select()
         {
             $this->cmd = self::SELECT_CMD;
             $from      = ' FROM ' . $this->table;
             $fields    = implode(', ', $this->fields);
             $where     = $this->buildWhere($this->wheres);
+
             return $this->exec($this->cmd . ' ' . $fields . $from . $where,
                 array_combine(array_column($this->wheres, 'field'), array_column($this->wheres, 'value')));
 
         }
 
+        /**
+         * @param array $data
+         *
+         * @return array|bool|int|string
+         */
         public function insert(array $data)
         {
             $this->cmd = self::INSERT_CMD;
@@ -153,6 +216,11 @@
             return $this->exec($this->cmd . $into . $fields . $values, $data);
         }
 
+        /**
+         * @param array $data
+         *
+         * @return array|bool|int|string
+         */
         public function update(array $data)
         {
             $this->cmd = self::UPDATE_CMD;
@@ -164,6 +232,9 @@
             return $this->exec($this->cmd . ' ' . $this->table . $set . $where, $data);
         }
 
+        /**
+         *
+         */
         public function delete()
         {
             $this->cmd = self::DELETE_CMD;
@@ -173,7 +244,11 @@
             $this->exec($this->cmd . $from . $where);
         }
 
-        public function getConnection(){
+        /**
+         * @return PDO
+         */
+        public function getConnection()
+        {
             return $this->connection;
         }
     }
