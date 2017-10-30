@@ -10,12 +10,7 @@
 
     use CatalogAPI\App;
 
-    // try{
-        $app = new App($config);
-    // }catch (\PDOException $exception){
-    //     return new \CatalogAPI\ErrorResponse($exception->getCode(), [],$exception->getMessage());
-    // }
-
+    $app = new App($config);
     $app->api->get('/:id', [$app->controller, 'getProduct']);
     $app->api->get('', [$app->controller, 'getProducts']);
     $app->api->post('', [$app->controller, 'addProduct']);
