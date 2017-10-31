@@ -241,7 +241,7 @@
             $from      = ' FROM ' . $this->table;
             $where     = $this->buildWhere($this->wheres);
 
-            $this->exec($this->cmd . $from . $where);
+            return $this->exec($this->cmd . $from . $where);
         }
 
         /**

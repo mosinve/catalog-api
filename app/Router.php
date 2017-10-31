@@ -104,26 +104,13 @@
          */
         public function handleRequest(ServerRequestInterface $request)
         {
+            $response = null;
             try {
-                return $this->process($this->getMatchedRoute($request));
+                return  $this->process($this->getMatchedRoute($request));
             } catch (\Exception $e) {
-                $code   = $e->getCode();
-                $result = $e->getMessage();
-
-                $errMsg = new ErrorResponse($code, []);
-
-                $error = [
-                    'errors' => [
-                        'status' => $code,
-                        'title'  => $errMsg->getReasonPhrase(),
-                        'detail' => $result
-                    ]
-                ];
-
-                $errMsg->getBody()->write(json_encode($error));
-
-                return $errMsg;
+                return Responder::error($e);
             }
+
         }
 
 
@@ -160,10 +147,16 @@
         private function process(ServerRequestInterface $request): ResponseInterface
         {
             $callback = $request->getAttribute('callback');
+            try {
+                return $callback($request);
+            }catch (\Exception $exception){
+                Responder::error($exception);
+            }
+
 
             /**
              * @var ResponseInterface $response
              */
-            return $callback($request);
+
         }
     }

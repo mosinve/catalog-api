@@ -38,7 +38,7 @@
         {
             $result = $this->catalog->getProduct($request->get('id'));
 
-            return new JSONResponse(200, [], json_encode($result));
+            return new JSONResponse(200, [], $result);
         }
 
         /**
@@ -73,7 +73,11 @@
             $result = $this->catalog->editProduct(json_decode($request->getBody()->getContents(), true),
                 $request->get('id'));
 
-            return new JSONResponse(200, [], json_encode($result));
+            if ($result){
+                return  $this->getProduct($request);
+            }
+
+            return new JSONResponse(204, [], '');
         }
 
         /**
@@ -83,11 +87,14 @@
          */
         public function deleteProduct(ServerRequestInterface $request)
         {
-            $prod = $this->catalog->getProduct($request->get('id'));
-            if ($prod) {
-                $this->catalog->deleteProduct($request->get('id'));
+            try{
+                $prod = $this->catalog->getProduct($request->get('id'));
+                if ($prod) {
+                    $this->catalog->deleteProduct($request->get('id'));
+                }
+            }catch (NotFoundException $exception){
+                return Responder::error($exception);
             }
-
             return new JSONResponse();
         }
     }

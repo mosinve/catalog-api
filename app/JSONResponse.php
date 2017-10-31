@@ -8,6 +8,8 @@
 
     namespace CatalogAPI;
 
+    use Psr\Http\Message\StreamInterface;
+
     /**
      * Class JSONResponse
      * @package CatalogAPI
@@ -19,7 +21,7 @@
          *
          * @param int $status
          * @param array $headers
-         * @param null $body
+         * @param string|array $body    Response body
          * @param string $version
          * @param null $reason
          */
@@ -29,6 +31,7 @@
                 'Content-Type'                => 'application/json',
                 'Access-Control-Allow-Origin' => '*'
             ];
-            parent::__construct($status, array_merge($headers, $jsonHeaders), $body, $version, $reason);
+
+            parent::__construct($status, array_merge($headers, $jsonHeaders), json_encode(['status' => $status, 'data' => $body]), $version, $reason);
         }
     }

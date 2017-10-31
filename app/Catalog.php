@@ -66,7 +66,7 @@
          *
          * @return Product
          */
-        public function createProduct($data): Product
+        public function createProduct(array $data): Product
         {
             $product     = new Product($data);
             $product->id = $this->connection->table(Product::$table)->insert($data);
@@ -97,6 +97,6 @@
             if ( ! is_array($id)) {
                 $id = [Product::$primaryKey => $id];
             }
-            $this->connection->table(Product::$table)->where($id)->delete();
+           return $this->connection->table(Product::$table)->where($id)->delete();
         }
     }
