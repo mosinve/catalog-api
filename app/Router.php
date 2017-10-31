@@ -136,7 +136,7 @@
                     return $request;
                 }
             }
-            throw new NotFoundException('Nothing found');
+            throw new NotFoundException('Method not implemented', '405');
         }
 
         /**
@@ -150,13 +150,7 @@
             try {
                 return $callback($request);
             }catch (\Exception $exception){
-                Responder::error($exception);
+                return Responder::error($exception);
             }
-
-
-            /**
-             * @var ResponseInterface $response
-             */
-
         }
     }

@@ -32,10 +32,10 @@
         /**
          * @param $id
          *
-         * @return Product
+         * @return Product|boolean
          * @throws NotFoundException
          */
-        public function getProduct($id): Product
+        public function getProduct($id)
         {
             if ( ! is_array($id)) {
                 $id = [Product::$primaryKey => $id];
@@ -48,8 +48,10 @@
             throw new NotFoundException('Product with given id not found', 404);
         }
 
+
         /**
          * @return array
+         * @throws NotFoundException
          */
         public function getProducts(): array
         {
@@ -58,20 +60,30 @@
                 $products[] = new Product($product);
             }
 
-            return $products ?? [];
+            if (isset($products)){
+                return $products;
+            }
+            throw new NotFoundException('Nothing found', 404);
         }
 
+
         /**
-         * @param $data
+         * @param array $data
          *
          * @return Product
+         * @throws NotFoundException
          */
         public function createProduct(array $data): Product
         {
-            $product     = new Product($data);
-            $product->id = $this->connection->table(Product::$table)->insert($data);
+            try {
+                $product     = new Product($data);
+                $product->id = $this->connection->table(Product::$table)->insert($data);
 
-            return $product;
+                return $product;
+            }catch (\PDOException $exception){
+                throw new NotFoundException($exception->getMessage(), '400');
+            }
+
         }
 
         /**
@@ -85,8 +97,12 @@
             if ( ! is_array($id)) {
                 $id = [Product::$primaryKey => $id];
             }
+            try {
+                return $this->connection->table(Product::$table)->where($id)->update($data);
+            }catch (\PDOException $exception){
+                throw new NotFoundException($exception->getMessage(), '400');
+            }
 
-            return $this->connection->table(Product::$table)->where($id)->update($data);
         }
 
         /**

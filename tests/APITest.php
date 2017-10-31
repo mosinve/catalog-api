@@ -32,35 +32,64 @@
         public function testIndex()
         {
             $result = json_decode($this->doCurl('GET'), true);
+
+            // Select all products
             $this->assertEquals('200', $result['status']);
         }
 
         public function testGetProduct()
         {
             $result = json_decode($this->doCurl('GET', '',1), true);
+            // select first product
             $this->assertEquals('200', $result['status']);
 
+
             $result = json_decode($this->doCurl('GET', '',100), true);
+
+            // select non-existence product
             $this->assertEquals('404', $result['status']);
         }
 
         public function testInsertProduct()
         {
+            $result = json_decode($this->doCurl('GET'), true);
+
+            $before = $result['data']['length'];
             $data = ['name' => 'test', 'type' => 1, 'size'=> 10, 'weight' => '20', 'price' => 111];
             $result = $this->doCurl('POST', $data);
             $decoded_result = json_decode($result, true);
-            $this->assertEquals('200', $decoded_result['status']);
+
+            $after = json_decode($this->doCurl('GET'), true)['data']['length'];
+            //Insert new product
+            $this->assertEquals('201', $decoded_result['status']);
+            $this->assertNotEquals($after, $before, 'Number of records not changed');
+
+            $data = ['name' => 'test', 'typeid' => 1, 'size'=> 10, 'weight' => '20', 'price' => 111];
+            $result = $this->doCurl('POST', $data);
+            $decoded_result = json_decode($result, true);
+
+            //Insert new product with incorrect field
+            $this->assertEquals('400', $decoded_result['status']);
         }
 
         public function testUpdateProduct()
         {
-            $data = ['name' => 'test test', 'type' => 2, 'size'=> 1000, 'weight' => '200', 'price' => 1111];
-            $result = $this->doCurl('PUT', $data, 1);
-            $decoded_result = json_decode($result, true);
-            $this->assertEquals('200', $decoded_result['status']);
 
-            $result = $this->doCurl('PUT', $data, 1);
+            $data = ['name' => 'test', 'type' => 1, 'size'=> 10, 'weight' => '20', 'price' => 111];
+            $result = $this->doCurl('POST', $data);
             $decoded_result = json_decode($result, true);
-            $this->assertEquals('', $decoded_result['status']);
+            $this->assertEquals('201', $decoded_result['status'], 'Model insert error');
+
+            $id = $decoded_result['data']['items']['id'];
+            $data = ['name' => 'test test', 'type' => 2, 'size'=> 1000, 'weight' => '200', 'price' => 1111];
+            $result = $this->doCurl('PUT', $data, $id);
+            $decoded_result = json_decode($result, true);
+
+            //update product
+            $this->assertEquals('200', $decoded_result['status'], 'Model update error');
+
+            $result = $this->doCurl('PUT', $data, $id);
+            $decoded_result = json_decode($result, true);
+            $this->assertEquals('', $decoded_result['status'], 'PUT idempotence failed');
         }
     }

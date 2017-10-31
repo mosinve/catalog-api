@@ -33,11 +33,12 @@
          * @param Request|ServerRequestInterface $request
          *
          * @return JSONResponse
+         *
+         * @throws NotFoundException
          */
-        public function getProduct(ServerRequestInterface $request)
+        public function getProduct(ServerRequestInterface $request):JSONResponse
         {
             $result = $this->catalog->getProduct($request->get('id'));
-
             return new JSONResponse(200, [], $result);
         }
 
@@ -47,8 +48,7 @@
         public function getProducts()
         {
             $result = $this->catalog->getProducts();
-
-            return new JSONResponse(200, [], json_encode($result));
+            return new JSONResponse(200, [], $result);
         }
 
         /**
@@ -60,7 +60,7 @@
         {
             $result = $this->catalog->createProduct(json_decode($request->getBody()->getContents(), true));
 
-            return new JSONResponse(200, [], json_encode($result));
+            return new JSONResponse(201, ['Location' => $request->getUri().$result->id], $result);
         }
 
         /**
@@ -74,7 +74,7 @@
                 $request->get('id'));
 
             if ($result){
-                return  $this->getProduct($request);
+                return new JSONResponse(200, [], $result);
             }
 
             return new JSONResponse(204, [], '');
@@ -87,14 +87,12 @@
          */
         public function deleteProduct(ServerRequestInterface $request)
         {
-            try{
                 $prod = $this->catalog->getProduct($request->get('id'));
+
                 if ($prod) {
                     $this->catalog->deleteProduct($request->get('id'));
                 }
-            }catch (NotFoundException $exception){
-                return Responder::error($exception);
-            }
-            return new JSONResponse();
+
+                return new JSONResponse();
         }
     }

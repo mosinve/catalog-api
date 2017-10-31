@@ -32,6 +32,6 @@
                 'Access-Control-Allow-Origin' => '*'
             ];
 
-            parent::__construct($status, array_merge($headers, $jsonHeaders), json_encode(['status' => $status, 'data' => $body]), $version, $reason);
+            parent::__construct($status, array_merge($headers, $jsonHeaders), json_encode(['status' => $status, 'data' => ['items' => $body, 'length' => count($body)]],JSON_NUMERIC_CHECK), $version, $reason);
         }
     }

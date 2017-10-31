@@ -26,6 +26,8 @@
          * @var
          */
         public $name;
+
+        private $fillable = ['id', 'name', 'type', 'size', 'price', 'weight'];
         /**
          * @var
          */
@@ -54,13 +56,10 @@
          */
         public function __construct($data)
         {
-            $this->name   = $data['name'];
-            $this->weight = $data['weight'];
-            $this->size   = $data['size'];
-            $this->price  = $data['price'];
-            $this->type   = $data['type'];
-            if (isset($data['id'])) {
-                $this->id = $data['id'];
+
+            $data = $this->processData($data);
+            foreach ($data as $key=>$value){
+                $this->$key = $value;
             }
 
         }
@@ -70,6 +69,13 @@
          */
         public function __toString()
         {
-            return json_encode($this);
+            return json_encode($this, JSON_NUMERIC_CHECK);
+        }
+
+        private function processData(array $data):array
+        {
+            return array_filter($data, function ($key){
+                return in_array($key, $this->fillable, true);
+            }, ARRAY_FILTER_USE_KEY);
         }
     }
