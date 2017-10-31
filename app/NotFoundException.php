@@ -8,7 +8,6 @@
 
     namespace CatalogAPI;
 
-
     /**
      * Class NotFoundException
      * @package CatalogAPI

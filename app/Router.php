@@ -8,7 +8,6 @@
 
     namespace CatalogAPI;
 
-
     use function GuzzleHttp\Psr7\uri_for;
     use GuzzleHttp\Psr7\UriResolver;
     use Psr\Http\Message\ResponseInterface;
@@ -138,7 +137,7 @@
         {
             $methodRoutes = $this->routes[$request->getMethod()];
             foreach ($methodRoutes as $route) {
-                if (preg_match('/' . preg_quote($this->basePath, '/') . $route . '/',
+                if (preg_match('/' . preg_quote($this->basePath, '/') . $route . '\b/',
                     UriResolver::resolve(uri_for($this->basePath), $request->getUri()), $matches)) {
                     array_shift($matches);
                     $request = $request->withAttribute('callback', $route->getCallback());

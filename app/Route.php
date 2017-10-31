@@ -8,7 +8,6 @@
 
     namespace CatalogAPI;
 
-
     /**
      * Class Route
      * @package CatalogAPI
@@ -16,7 +15,7 @@
     class Route
     {
         /**
-         * @var
+         * @var callable
          */
         private $callback;
 

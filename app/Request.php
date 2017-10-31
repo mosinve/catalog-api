@@ -8,7 +8,6 @@
 
     namespace CatalogAPI;
 
-
     use GuzzleHttp\Psr7\LazyOpenStream;
     use GuzzleHttp\Psr7\ServerRequest;
 

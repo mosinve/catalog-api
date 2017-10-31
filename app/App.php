@@ -51,8 +51,13 @@
          */
         public function run(): void
         {
-            $response = $this->api->handleRequest(Request::fromGlobals());
-            $this->renderResponse($response);
+            try{
+                $response = $this->api->handleRequest(Request::fromGlobals());
+                $this->renderResponse($response);
+            }catch (\Exception $exception){
+                die (new ErrorResponse('500', []));
+            }
+
         }
 
         /**
