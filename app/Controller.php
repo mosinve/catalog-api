@@ -70,6 +70,7 @@
          */
         public function editProduct(Request $request)
         {
+            $this->getProduct($request);
             $result = $this->catalog->editProduct(json_decode($request->getBody()->getContents(), true),
                 $request->get('id'));
 
