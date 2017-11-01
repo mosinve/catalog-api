@@ -29,7 +29,7 @@
          */
         public $catalog;
         /**
-         * @var Controller
+         * @var ProductsController
          */
         public $controller;
 
@@ -42,8 +42,8 @@
         {
             $this->db         = new DB($config['database']);
             $this->api        = new Router($config['router']);
-            $this->catalog    = new Catalog($this->db);
-            $this->controller = new Controller($this->catalog);
+            $this->productsCatalog    = new Catalog($this->db);
+            $this->productsController = new ProductsController($this->productsCatalog);
         }
 
         /**

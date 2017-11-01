@@ -6,28 +6,30 @@
      * Time: 22:14
      */
 
-    namespace CatalogAPI;
+    namespace CatalogAPI\models;
 
     /**
      * Class Product
      * @package CatalogAPI
      */
-    class Product
+    class Product extends DBModel
     {
+
         /**
          * @var string
          */
-        static public $table = 'products';
+        public static $table = 'products';
         /**
          * @var string
          */
-        static public $primaryKey = 'id';
+        public static $primaryKey = 'id';
+
+        protected $fillable = ['id', 'name', 'type', 'size', 'price', 'weight'];
         /**
          * @var
          */
         public $name;
 
-        private $fillable = ['id', 'name', 'type', 'size', 'price', 'weight'];
         /**
          * @var
          */
@@ -49,20 +51,6 @@
          */
         public $type;
 
-        /**
-         * Product constructor.
-         *
-         * @param $data
-         */
-        public function __construct($data)
-        {
-
-            $data = $this->processData($data);
-            foreach ($data as $key=>$value){
-                $this->$key = $value;
-            }
-
-        }
 
         /**
          * @return string
@@ -72,10 +60,4 @@
             return json_encode($this, JSON_NUMERIC_CHECK);
         }
 
-        private function processData(array $data):array
-        {
-            return array_filter($data, function ($key){
-                return in_array($key, $this->fillable, true);
-            }, ARRAY_FILTER_USE_KEY);
-        }
     }

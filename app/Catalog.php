@@ -8,6 +8,8 @@
 
     namespace CatalogAPI;
 
+    use CatalogAPI\models\Product;
+
     /**
      * Class Catalog
      * @package CatalogAPI

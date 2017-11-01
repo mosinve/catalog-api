@@ -14,7 +14,7 @@
      * Class Controller
      * @package CatalogAPI
      */
-    class Controller
+    class ProductsController
     {
         /**
          * @var Catalog
