@@ -8,7 +8,7 @@
 
     namespace CatalogAPI;
 
-    use Psr\Http\Message\ServerRequestInterface;
+    use CatalogAPI\Models\Product;
 
     /**
      * Class Controller
@@ -17,38 +17,36 @@
     class ProductsController
     {
         /**
-         * @var Catalog
+         * @var QueryBuilder
          */
         private $catalog;
 
         /**
          * Controller constructor.
          */
-        public function __construct(Catalog $catalog)
+        public function __construct(QueryBuilder $catalog)
         {
             $this->catalog = $catalog;
         }
 
         /**
-         * @param Request|ServerRequestInterface $request
+         * @param Request $request
          *
          * @return JSONResponse
          *
          * @throws NotFoundException
          */
-        public function getProduct(ServerRequestInterface $request):JSONResponse
+        public function getProduct(Request $request):JSONResponse
         {
-            $result = $this->catalog->getProduct($request->get('id'));
-            return new JSONResponse(200, [], $result);
+            return new JSONResponse(200, [], Product::find($request->get('id')));
         }
 
         /**
          * @return JSONResponse
          */
-        public function getProducts()
+        public function getProducts():JSONResponse
         {
-            $result = $this->catalog->getProducts();
-            return new JSONResponse(200, [], $result);
+            return new JSONResponse(200, [], Product::all());
         }
 
         /**
@@ -58,9 +56,9 @@
          */
         public function addProduct(Request $request)
         {
-            $result = $this->catalog->createProduct(json_decode($request->getBody()->getContents(), true));
+            $result = Product::create(json_decode($request->getBody()->getContents(), true));
 
-            return new JSONResponse(201, ['Location' => $request->getUri().$result->id], $result);
+            return new JSONResponse(201, ['Location' => $request->getUri().'/'.$result->id], $result);
         }
 
         /**
@@ -70,30 +68,28 @@
          */
         public function editProduct(Request $request)
         {
-            $this->getProduct($request);
-            $result = $this->catalog->editProduct(json_decode($request->getBody()->getContents(), true),
-                $request->get('id'));
+            $product = Product::find($request->get('id'));
+
+            $product->fill(json_decode($request->getBody()->getContents(),1));
+            $result = $product->save();
 
             if ($result){
-                return new JSONResponse(200, [], $result);
+                return new JSONResponse(200, [], $product);
             }
 
             return new JSONResponse(204, [], '');
         }
 
         /**
-         * @param ServerRequestInterface $request
+         * @param $request Request
          *
          * @return JSONResponse
          */
-        public function deleteProduct(ServerRequestInterface $request)
+        public function deleteProduct(Request $request)
         {
-                $prod = $this->catalog->getProduct($request->get('id'));
+            $product = Product::find($request->get('id'));
+            $product->delete();
 
-                if ($prod) {
-                    $this->catalog->deleteProduct($request->get('id'));
-                }
-
-                return new JSONResponse();
+            return new JSONResponse(204);
         }
     }

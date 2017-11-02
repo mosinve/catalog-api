@@ -16,6 +16,6 @@
             'password' => 'root'
         ],
         'router' => [
-            'basepath' => 'http://192.168.239.128/api/v1'
+            'basepath' => 'http://192.168.99.10/api/v1/'
         ]
     ];

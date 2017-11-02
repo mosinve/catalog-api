@@ -20,7 +20,7 @@
 
             $config = require '../config.php';
             $this->db     = new DB($config['database']);
-            $this->catalog = new Catalog($this->db);
+            $this->catalog = new QueryBuilder($this->db);
         }
 
 
@@ -55,12 +55,12 @@
                 'price'  => 100
             ]);
 
-            $product = $this->catalog->getProduct($this->db->getConnection()->lastInsertId());
+            $product = $this->catalog->find($this->db->getConnection()->lastInsertId());
 
             $this->assertNotEmpty($product);
 
             $this->catalog->editProduct(['name'=>'Туалетная бумага'], $product->id);
-            $editedProduct = $this->catalog->getProduct($product->id);
+            $editedProduct = $this->catalog->find($product->id);
             $this->assertNotEquals($product, $editedProduct);
         }
 
@@ -69,7 +69,7 @@
             $products = $this->catalog->getProducts();
 
             foreach ($products as $product){
-                $this->catalog->deleteProduct($product->id);
+                $this->catalog->delete($product->id);
             }
 
             $products = $this->catalog->getProducts();
