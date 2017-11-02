@@ -8,6 +8,7 @@
 
     namespace CatalogAPI;
 
+    use CatalogAPI\Models\Model;
     use PDO, PDOException;
 
     /**
@@ -61,6 +62,7 @@
                 $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 $this->connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
                 $this->connection->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
+                Model::setConnection($this);
             } catch (PDOException $e) {
                 die($e->getMessage());
             }
@@ -146,7 +148,9 @@
                 $conditions[$boolean] = implode(" $boolean ", $item);
             }
             if ($conditions) {
-                return ' WHERE ' . implode(' OR ', $conditions);
+                $where = ' WHERE ' . implode(' OR ', $conditions);
+                $this->wheres = [];
+                return $where;
             }
 
             return '';

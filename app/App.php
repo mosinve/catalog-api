@@ -25,13 +25,13 @@
          */
         public $api;
         /**
-         * @var Catalog
+         * @var QueryBuilder
          */
-        public $catalog;
+        public $productsCatalog;
         /**
-         * @var Controller
+         * @var ProductsController
          */
-        public $controller;
+        public $productsController;
 
         /**
          * App constructor.
@@ -42,8 +42,8 @@
         {
             $this->db         = new DB($config['database']);
             $this->api        = new Router($config['router']);
-            $this->catalog    = new Catalog($this->db);
-            $this->controller = new Controller($this->catalog);
+            $this->productsCatalog    = new QueryBuilder($this->db);
+            $this->productsController = new ProductsController($this->productsCatalog);
         }
 
         /**

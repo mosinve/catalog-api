@@ -8,16 +8,24 @@
 
     namespace CatalogAPI;
 
+    use CatalogAPI\Models\Model;
+
     /**
      * Class Catalog
      * @package CatalogAPI
      */
-    class Catalog
+    class QueryBuilder
     {
         /**
          * @var DB
          */
         private $connection;
+
+
+        /**
+         * @var Model
+         */
+        private $model;
 
         /**
          * Catalog constructor.
@@ -32,20 +40,20 @@
         /**
          * @param $id
          *
-         * @return Product|boolean
+         * @return array
          * @throws NotFoundException
          */
-        public function getProduct($id)
+        public function find($id)
         {
-            if ( ! is_array($id)) {
-                $id = [Product::$primaryKey => $id];
+            if ( !is_array($id)) {
+                $id = [$this->model::getPrimaryKey() => $id];
             }
-            $result = $this->connection->table(Product::$table)->where($id)->select();
+            $result = $this->connection->table($this->model::getTable())->where($id)->select();
 
             if ($result) {
-                return new Product($result[0]);
+                return $result[0];
             }
-            throw new NotFoundException('Product with given id not found', 404);
+            throw new NotFoundException('Resource with given id not found', 404);
         }
 
 
@@ -53,15 +61,12 @@
          * @return array
          * @throws NotFoundException
          */
-        public function getProducts(): array
+        public function all(): array
         {
-            $result = $this->connection->table(Product::$table)->select();
-            foreach ($result as $product) {
-                $products[] = new Product($product);
-            }
+            $result = $this->connection->table($this->model::getTable())->select();
 
-            if (isset($products)){
-                return $products;
+            if (isset($result)){
+                return $result;
             }
             throw new NotFoundException('Nothing found', 404);
         }
@@ -70,16 +75,13 @@
         /**
          * @param array $data
          *
-         * @return Product
+         * @return array|bool|int|string
          * @throws NotFoundException
          */
-        public function createProduct(array $data): Product
+        public function create(array $data)
         {
             try {
-                $product     = new Product($data);
-                $product->id = $this->connection->table(Product::$table)->insert($data);
-
-                return $product;
+                return $this->connection->table($this->model::getTable())->insert($data);
             }catch (\PDOException $exception){
                 throw new NotFoundException($exception->getMessage(), '400');
             }
@@ -91,14 +93,15 @@
          * @param $id
          *
          * @return array|bool|int|string
+         * @throws NotFoundException
          */
-        public function editProduct($data, $id)
+        public function update($data, $id)
         {
             if ( ! is_array($id)) {
-                $id = [Product::$primaryKey => $id];
+                $id = [$this->model::getPrimaryKey() => $id];
             }
             try {
-                return $this->connection->table(Product::$table)->where($id)->update($data);
+                return $this->connection->table($this->model::getTable())->where($id)->update($data);
             }catch (\PDOException $exception){
                 throw new NotFoundException($exception->getMessage(), '400');
             }
@@ -107,12 +110,24 @@
 
         /**
          * @param $id
+         *
+         * @return array|bool|int|string
          */
-        public function deleteProduct($id)
+        public function delete($id)
         {
             if ( ! is_array($id)) {
-                $id = [Product::$primaryKey => $id];
+                $id = [$this->model::getPrimaryKey() => $id];
             }
-           return $this->connection->table(Product::$table)->where($id)->delete();
+           return $this->connection->table($this->model::getTable())->where($id)->delete();
+        }
+
+        /**
+         * @param $model string
+         *
+         * @return self
+         */
+        public function setModel($model){
+            $this->model = new $model();
+            return $this;
         }
     }
